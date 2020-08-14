@@ -8,10 +8,9 @@ import (
 	"github.com/gogo/protobuf/proto"
 	mb "github.com/hyperledger/fabric-protos-go/msp"
 	"github.com/hyperledger/fabric-protos-go/peer"
-	"github.com/hyperledger/fabric/bccsp/factory"
-	"github.com/hyperledger/fabric/common/cauthdsl"
-	"github.com/hyperledger/fabric/msp"
-	"github.com/hyperledger/fabric/protoutil"
+	"github.com/meshplus/bitxhub-core/third_party/github.com/hyperledger/fabric/common/cauthdsl"
+	"github.com/meshplus/bitxhub-core/third_party/github.com/hyperledger/fabric/msp"
+	"github.com/meshplus/bitxhub-core/third_party/github.com/hyperledger/fabric/protoutil"
 	"github.com/meshplus/bitxhub-model/pb"
 )
 
@@ -179,10 +178,7 @@ type PolicyEvaluator struct {
 func NewPolicyEvaluator(confBytes []string) (*PolicyEvaluator, error) {
 	mspList := make([]msp.MSP, len(confBytes))
 	for i, confByte := range confBytes {
-		tempBccsp, err := msp.New(
-			&msp.BCCSPNewOpts{NewBaseOpts: msp.NewBaseOpts{Version: msp.MSPv1_3}},
-			factory.GetDefault(),
-		)
+		tempBccsp, err := msp.New(&msp.BCCSPNewOpts{NewBaseOpts: msp.NewBaseOpts{Version: msp.MSPv1_3}})
 		if err != nil {
 			return nil, err
 		}
@@ -214,7 +210,7 @@ func (id *PolicyEvaluator) Evaluate(policyBytes []byte, signatureSet []*protouti
 	if err != nil {
 		return err
 	}
-	return policy.EvaluateSignedData(signatureSet)
+	return policy.Evaluate(signatureSet)
 }
 
 func GetSignatureSet(artifact *valiadationArtifacts) []*protoutil.SignedData {
